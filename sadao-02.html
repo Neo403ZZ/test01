@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>定生のお手伝い。</title>
+    <style>
+        /* ==========================================
+           全体のデザイン設定（ベージュ・テラコッタ・ブラウン）
+           ========================================== */
+        body {
+            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", Meiryo, sans-serif;
+            background-color: #fdfaf2; /* 優しい生成り色（ベージュ） */
+            color: #4a3b32; /* ナッツのようなダークブラウン（文字色） */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左側メニューの枠組み */
+        aside {
+            width: 320px;
+            background-color: #f3ede0; /* 少し濃いめの温かいベージュ */
+            border-right: 2px solid #e6dcc8;
+            padding: 30px 15px;
+            box-sizing: border-box;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        aside h2 {
+            font-size: 1.2rem;
+            color: #d35400; /* 温かみのあるテラコッタ */
+            margin-bottom: 20px;
+            border-bottom: 2px solid #d35400;
+            padding-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        aside ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        aside li {
+            margin-bottom: 12px;
+        }
+
+        /* メメニューを1段右にずらす（サポート項目用） */
+        aside li.sub-menu {
+            margin-left: 15px;
+        }
+
+        /* メニューをさらに右にずらす（店舗情報・お問い合わせ用） */
+        aside li.deep-sub-menu {
+            margin-left: 30px;
+        }
+
+        /* 「投資」の下に1行あけるための特製スキマ設定 */
+        aside li.menu-spacer {
+            margin-bottom: 25px;
+        }
+
+        /* メニューのボタン */
+        aside button {
+            display: block;
+            width: 100%;
+            padding: 12px 12px;
+            background-color: #ffffff;
+            color: #4a3b32;
+            border: 1px solid #d3c4b4;
+            border-radius: 6px;
+            text-align: left;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            white-space: normal;
+            line-height: 1.4;
+        }
+
+        aside button:hover {
+            background-color: #e9743f; /* マウスをのせたときは温かいオレンジ */
+            color: #ffffff;
+            border-color: #e9743f;
+        }
+
+        aside button.active {
+            background-color: #d35400; /* 今見ている画面のボタン */
+            color: #ffffff;
+            border-color: #d35400;
+            font-weight: bold;
+        }
+
+        /* 右側メインコンテンツ（本文エリア） */
+        main {
+            margin-left: 320px;
+            flex-grow: 1;
+            padding: 50px 40px;
+            box-sizing: border-box;
+            max-width: 950px;
+        }
+
+        /* 各画面（セクション）の初期設定（基本は非表示） */
+        .content-section {
+            display: none;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(74, 59, 50, 0.05);
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* ホームだけは最初から表示 */
+        #home {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: #d35400;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: #d35400;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #d3c4b4;
+            padding-bottom: 8px;
+        }
+
+        p {
+            line-height: 1.8;
+            font-size: 1.05rem;
+            margin-bottom: 20px;
+        }
+
+        /* ホーム画面の写真枠 */
+        .home-photo-container {
+            margin: 25px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 4px solid #f3ede0;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .home-photo-container img {
+            display: block;
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        /* 箇条書き */
+        ul.feature-list {
+            padding-left: 20px;
+            margin-bottom: 25px;
+        }
+
+        ul.feature-list li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            position: relative;
+            list-style-type: none;
+        }
+
+        ul.feature-list li::before {
+            content: "🍂";
+            position: absolute;
+            left: -25px;
+        }
+
+        /* 料金表 */
+        .price-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.05rem;
+        }
+
+        .price-table th, .price-table td {
+            border: 1px solid #d3c4b4;
+            padding: 12px 15px;
+            text-align: left;
+        }
+
+        .price-table th {
+            background-color: #fcefdc;
+            color: #d35400;
+            font-weight: bold;
+        }
+
+        .price-table td strong {
+            color: #d35400;
+            font-size: 1.2rem;
+        }
+
+        /* お問い合わせボックス */
+        .contact-box {
+            background-color: #fff9f3;
+            border-left: 4px solid #e9743f;
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* ボタンの共通設定 */
+        .btn-mail, .btn-line {
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-mail {
+            background-color: #e9743f;
+            color: #ffffff;
+        }
+
+        .btn-mail:hover {
+            background-color: #d35400;
+        }
+
+        /* LINE用のボタン設定 */
+        .btn-line {
+            background-color: #06c755;
+            color: #ffffff;
+        }
+
+        .btn-line:hover {
+            background-color: #05a647;
+        }
+
+        .phone-notice {
+            margin-top: 15px;
+            padding: 12px;
+            background-color: #fceddb;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            color: #5c3a21;
+            font-weight: bold;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         【メニューエリア】（左側）
+         ========================================== -->
+    <aside>
+        <h2>メニュー</h2>
+        <ul>
+            <li><button class="menu-btn active" onclick="showSection('home')">ホーム</button></li>
+            <li><button class="menu-btn" onclick="showSection('price-info')">💰 料金について</button></li>
+            
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('pc-support')">パソコンなど</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('card-clean')">カードの整理</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('budget')">家計管理</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('declutter')">家のもの減らす</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('inheritance')">将来の相続の相談</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('cooking')">自炊しておいしいものを作りたい</button></li>
+            <li class="sub-menu"><button class="menu-btn" onclick="showSection('saving')">節約して貯金したい</button></li>
+            
+            <li class="sub-menu menu-spacer"><button class="menu-btn" onclick="showSection('investment')">投資をやってみたい</button></li>
+            
+            <li class="deep-sub-menu"><button class="menu-btn" onclick="showSection('shop-info')">店舗情報</button></li>
+            <li class="deep-sub-menu"><button class="menu-btn" onclick="showSection('contact')">お問い合わせ</button></li>
+        </ul>
+    </aside>
+
+    <!-- ==========================================
+         【本文エリア】（右側）
+         ========================================== -->
+    <main>
+
+        <!-- ① ホーム画面 -->
+        <section id="home" class="content-section">
+            <h1>定生のお手伝い。</h1>
+            <div class="home-photo-container">
+                <img src="IMG_5445.jpg" alt="ホーム画面の写真">
+            </div>
+            <p>毎日の生活の中で、どこに相談していいか分からない「ちょっとしたお悩み」はありませんか？</p>
+            <p>「定生のお手伝い。」では、あなたの心と暮らしが軽くなるように、親身になってサポートいたします。たとえば、以下のようなことでお悩みでしたら、どうぞお気軽にご相談ください。</p>
+            <ul class="feature-list">
+                <li>パソコンやスマホに関する悩みの解決</li>
+                <li>カードを作ったけれど解約したい</li>
+                <li>家計管理ができない</li>
+                <li>家の中のものを少なくしたい</li>
+                <li>相続や将来の両親に対する相談など</li>
+            </ul>
+        </section>
+
+        <!-- ② 料金について -->
+        <section id="price-info" class="content-section">
+            <h2>料金について</h2>
+            <p>安心してご依頼いただけるよう、分かりやすい時間制の料金設定にしております。</p>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">ご利用回数・プラン</th>
+                        <th style="width: 60%;">料金（税込）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>初回のご利用</strong></td>
+                        <td><strong>1時間 3,000円</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2回目以降（半日プラン）</strong></td>
+                        <td><strong>4時間連続 10,000円</strong></td>
+                    </tr>
+                    <tr>
+                        <td><strong>2回目以降（1日プラン）</strong></td>
+                        <td><strong>1日（8時間） 20,000円</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p><strong>⚠️ 出張・追加費用に関するお願い：</strong></p>
+            <ul class="feature-list">
+                <li>活動拠点から<strong>10km以上</strong>離れている場合は、別途出張交通費を追加で頂戴いたします。</li>
+                <li>訪問先で有料の駐車料金が発生する場合は、実費分を別途追加とさせていただきます。</li>
+            </ul>
+        </section>
+
+        <!-- 各サポート項目 -->
+        <section id="pc-support" class="content-section">
+            <h2>パソコンなど</h2>
+            <p>パソコンやスマホに関するお悩みを解決します。設定の仕方がわからない、使い方がわからないなど、どんな小さなことでも丁寧にお答えします。</p>
+        </section>
+
+        <section id="card-clean" class="content-section">
+            <h2>カードの整理</h2>
+            <p>「作ったけれど使っていないカードを解約したい」「手続きが面倒でそのままにしている」というカードを、すっきり綺麗に整理・解約するお手伝いをいたします。</p>
+        </section>
+
+        <section id="budget" class="content-section">
+            <h2>家計管理</h2>
+            <p>「どんぶり勘定になってしまって家計管理ができない」「これからのために見直したい」という方へ。無理なく続けられる簡単な方法を一緒に考えます。</p>
+        </section>
+
+        <section id="declutter" class="content-section">
+            <h2>家のもの減らす</h2>
+            <p>「家の中のものを少なくして身軽に暮らしたい」「どこから片付けたらいいか分からない」というお部屋のお片付けや、ものを減らすアドバイスをいたします。</p>
+        </section>
+
+        <section id="inheritance" class="content-section">
+            <h2>将来の相続の相談</h2>
+            <p>将来に向けての相続のことや、これから高齢になっていくご両親に対するご相談、実家の管理など、家族の安心のために一歩進めるお手伝いをいたします。</p>
+        </section>
+
+        <section id="cooking" class="content-section">
+            <h2>自炊しておいしいものを作りたい</h2>
+            <p>食材の買い出しのコツや、余らせない保存方法、簡単で体に優しい自炊料理など、毎日の食卓が楽しくなるお手伝いをいたします。</p>
+        </section>
+
+        <section id="saving" class="content-section">
+            <h2>節約して貯金したい</h2>
+            <p>無理な我慢をする節約ではなく、固定費の見直しや日々のちょっとした意識で、毎月自然と手元にお金が残る仕組み作りを一緒に考えます。</p>
+        </section>
+
+        <section id="investment" class="content-section">
+            <h2>投資をやってみたい</h2>
+            <p>「新NISAってよく聞くけれど何から始めればいい？」「損をするのが怖くて一歩が出ない」という方へ、基本の仕組みを分かりやすく中立な立場でお教えします。</p>
+        </section>
+
+        <!-- 店舗情報 -->
+        <section id="shop-info" class="content-section">
+            <h2>店舗情報</h2>
+            <p><strong>屋号：</strong> 定生のお手伝い</p>
+            <p><strong>住所：</strong> 〒742-0000 山口県柳井市〇〇町XXXX番地</p>
+        </section>
+
+        <!-- お問い合わせ（★電話番号を反映） -->
+        <section id="contact" class="content-section">
+            <h2>お問い合わせ</h2>
+            <p>お困りごとがございましたら、どうぞお気軽にご連絡ください。</p>
+            
+            <div class="contact-box" style="border-left: 4px solid #06c755;">
+                <p><strong>💬 LINEでのお問い合わせ（おすすめ）</strong></p>
+                <p>24時間いつでも気軽にメッセージをお送りいただけます。下記のボタンを押すとLINEアプリが開きます。</p>
+                <a href="https://line.me/ti/p/5mx8RvHGuj" target="_blank" class="btn-line">🟢 定生をLINE友だち追加する</a>
+            </div>
+
+            <div class="contact-box">
+                <p><strong>✉️ メールでのお問い合わせ</strong></p>
+                <p>下記のボタンをクリックすると、自動でメールソフトが起動します。</p>
+                <a href="mailto:tyesuto345@icloud.com?subject=お問合せ：定生のお手伝い" class="btn-mail">定生へメールを送る</a>
+            </div>
+
+            <div class="contact-box">
+                <p><strong>📞 お電話でのお問い合わせ</strong></p>
+                <!-- ★新しい電話番号をセットしました -->
+                <p style="font-size: 1.4rem; font-weight: bold; color: #d35400; margin: 5px 0;">電話番号：090-6845-4818</p>
+                <div class="phone-notice">
+                    ⚠️ <strong>留守番電話へのお願い：</strong><br>
+                    作業中などでお電話に出られないことが多いため、留守番電話に【ご用件】と【そちらの電話番号】を言ってください。確認次第、こちらから折り返しご連絡いたします。
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => { section.style.display = 'none'; });
+            const activeSection = document.getElementById(sectionId);
+            if (activeSection) { activeSection.style.display = 'block'; }
+            const buttons = document.querySelectorAll('.menu-btn');
+            buttons.forEach(button => { button.classList.remove('active'); });
+            const clickedButton = window.event.currentTarget;
+            if (clickedButton) { clickedButton.classList.add('active'); }
+        }
+    </script>
+</body>
+</html>
